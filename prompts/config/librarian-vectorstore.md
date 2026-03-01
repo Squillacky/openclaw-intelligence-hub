@@ -2,9 +2,9 @@
 
 > `prompts/config/librarian-vectorstore.md` | Version 1.0  
 > **Purpose:** Defines the five vector store collections, universal metadata schema, retrieval patterns, write operations, and freshness policy for the Librarian Agent.  
-> **ADR reference:** ADR-004 (Librarian as dedicated memory agent) | ADR-012 (vector database technology selection — PENDING)
+> **ADR reference:** ADR-004 (Librarian as dedicated memory agent) | ADR-012 (DECIDED: Chroma selected as vector database)
 
-> ⚠️ **Technology-agnostic.** This specification defines schemas and behavior, not implementation. The specific vector database is selected in ADR-012 (not yet decided). Current frontrunner: Chroma for simplicity, pgvector if PostgreSQL already deployed.
+> ⚠️ **Implementation Definition:** This specification defines schemas and behavior. As per ADR-012, **Chroma** is the designated vector database for Phase 1, with pgvector as the defined upgrade path.
 
 ---
 
@@ -243,19 +243,19 @@ Content to vectorize immediately when found.
 
 ---
 
-## Section 8 — Technology Selection (Pending ADR-012)
+## Section 8 — Technology Selection (Resolved by ADR-012)
 
-**Decision pending.** Candidates evaluated below. Selection criteria: named collections with distinct schemas, rich metadata filtering, local/self-hosted option, Python client, persistence across restarts, free/low-cost tier, batch upsert support.
+**Decision locked in ADR-012: Chroma selected.** Evaluation criteria: named collections with distinct schemas, rich metadata filtering, local/self-hosted option, Python client, persistence across restarts, free/low-cost tier, batch upsert support.
 
 | Database | Pros | Cons | Recommendation |
 |---|---|---|---|
-| **Chroma** | Simplest VPS setup, free, native self-hosted, good metadata filtering, Python-native | Less mature filtering at scale | ⭐ Start here |
-| **pgvector** | Best if already running PostgreSQL, excellent SQL-based filtering, battle-tested | Requires PostgreSQL operational overhead | Use if PostgreSQL already deployed |
-| **Qdrant** | Strong filtering, good Ubuntu compatibility, Rust-based performance | More complex setup than Chroma | Upgrade path from Chroma |
+| **Chroma** | Simplest VPS setup, free, native self-hosted, good metadata filtering, Python-native | Less mature filtering at scale | SELECTED for Phase 1 |
+| **pgvector** | Best if already running PostgreSQL, excellent SQL-based filtering, battle-tested | Requires PostgreSQL operational overhead | DESIGNATED UPGRADE PATH |
+| **Qdrant** | Strong filtering, good Ubuntu compatibility, Rust-based performance | More complex setup than Chroma | Alternative upgrade path |
 | **Weaviate** | Production-scale, enterprise features | Complex setup, overkill for initial deployment | Phase 2+ consideration |
 | **Pinecone** | Managed, excellent tooling | Cloud-only — violates VPS-first principle | Not recommended |
 
-**Preliminary recommendation:** Start with Chroma, migrate to pgvector if filtering complexity demands it. Decision locked when ADR-012 is written.
+**Recommendation implemented:** Started with Chroma, prepared to migrate to pgvector if filtering complexity demands it.
 
 ---
 
@@ -269,6 +269,6 @@ Content to vectorize immediately when found.
 | Write operations | 7 |
 | Freshness status levels | 6 |
 | High-priority vectorization items | 8+ |
-| Technology decision | Pending ADR-012 |
+| Technology decision | Chroma selected (ADR-012) |
 
-*Version 1.0 — technology selection pending ADR-012. Schema is locked and technology-agnostic.*
+*Version 1.1 — technology selection resolved by ADR-012.*

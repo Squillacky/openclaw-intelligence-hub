@@ -32,12 +32,12 @@ Security patches prefixed with `!` (e.g., `!1.0.1`)
 - ADR-008: Two-repo strategy ✅
 - ADR-009: Drone Factory — 🅿️ Parked
 - ADR-010: UX Wrapper — 🅿️ Parked
+- ADR-012: Vector store technology selection (Chroma) ✅
 
 ### Known Gaps (documented)
 - Agent system prompts (8 files in `prompts/agents/`) — pending extraction from session transcripts
 - `docs/02-scout-keywords.md` and `docs/03-influencer-registry.md` — pending Markdown extraction
 - Influencer Tier 7 (Finance + AI voices) — Lane B research required
-- Vector store technology decision — pending ADR-012
 - Colony deployment — pending Phase 2 completion
 
 ---

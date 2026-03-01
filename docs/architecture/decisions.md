@@ -20,6 +20,7 @@
 | [ADR-008](#adr-008) | Two-Repo Strategy | ✅ | Repository / Infrastructure |
 | [ADR-009](#adr-009) | Drone Factory as Separate System | 🅿️ | Future Architecture |
 | [ADR-010](#adr-010) | UX Wrapper for Configuration Portability | 🅿️ | Future / Product |
+| [ADR-012](#adr-012) | Vector Store Technology Selection | ✅ | Infrastructure / Database |
 
 ---
 
@@ -277,6 +278,33 @@ A UX wrapper for configuration generation is a Phase 3 build — after Hub compl
 2. Transfer Workflow built and tested
 3. Drone Factory phase initiated and data package format stable
 
+## ADR-012
+
+**Vector Store Technology Selection** | ✅ Accepted | February 2026
+
+### Context
+- The Librarian Agent requires a vector database to persist the colony's memory (ADR-004).
+- The vector store specification (`prompts/config/librarian-vectorstore.md`) defines 5 collections, 18 metadata fields, and 9 retrieval patterns.
+- The schema is technology-agnostic, but deployment requires locking in a specific engine.
+- Options evaluated included Chroma, pgvector, Qdrant, Weaviate, and Pinecone.
+- The system prioritizes VPS-friendly deployment, low operational overhead for Phase 1, and strong metadata filtering.
+
+### Decision
+**Chroma** is selected as the initial vector database for the OpenClaw colony. **pgvector** is designated as the explicit upgrade path if and when filtering complexity or dataset size exceeds Chroma's comfortable limits.
+
+### Rationale
+- **Simplest VPS setup:** Chroma runs natively on Ubuntu 24.04 with minimal configuration compared to Qdrant or enterprise solutions.
+- **Python-native:** Integrates seamlessly with the Python-based Intelligence Hub without requiring a separate network service architecture immediately.
+- **Self-hosted & Free:** Adheres strictly to the VPS-first principle; avoids cloud lock-in (ruling out Pinecone).
+- **Sufficient for Phase 1:** The estimated volume (under 15,000 vectors at full load across 5 collections) is well within Chroma's performance envelope.
+- **Clear Upgrade Path:** The universal metadata schema is strictly defined. If Chroma's metadata filtering becomes a bottleneck at scale, migrating the well-structured data to pgvector (or Qdrant) is a straightforward ETL process, not a structural redesign.
+
+### Consequences
+- **REQUIRES:** Python/Chroma environment setup in `clawroman-fortress`.
+- **REQUIRES:** Implementation of Librarian write operations using Chroma SDK.
+- **ENABLES:** Immediate, low-friction deployment of the Librarian's memory architecture.
+- **PREVENTS:** Premature optimization into heavy database administration before the ecosystem generates sufficient data volume to justify it.
+
 ---
 
 ## Future ADR Register
@@ -286,7 +314,6 @@ Ideas captured. Not yet decided. Each becomes a formal ADR when the decision is 
 | Future ID | Question | Decide When |
 |-----------|----------|-------------|
 | ADR-011 | Scribe category configuration — formal config doc for four-category routing | Before Scribe deployment |
-| ADR-012 | Vector store technology selection (Chroma vs. pgvector vs. Qdrant) | Before Librarian deployment |
 | ADR-013 | Finance + AI Influencer Tier 7 — which voices enter the registry | After Lane B research |
 | ADR-014 | CEO-level influencer additions (Lütke, Altman, Nadella, Huang) | Next influencer registry revision |
 | ADR-015 | Drone Factory vehicle class taxonomy | When Drone Factory phase begins |
